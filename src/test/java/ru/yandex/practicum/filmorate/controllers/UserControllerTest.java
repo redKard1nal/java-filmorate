@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exceptions.UserValidationException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -37,28 +37,28 @@ public class UserControllerTest {
     public void shouldThrowAnExceptionWhenUsersEmailIsEmpty() {
         user.setEmail("");
 
-        Assertions.assertThrows(UserValidationException.class, () -> controller.addUser(user));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addUser(user));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUsersEmailDoesNotContainsAt() {
         user.setEmail("email.but.no.at.symbol");
 
-        Assertions.assertThrows(UserValidationException.class, () -> controller.addUser(user));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addUser(user));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUserLoginIsEmpty() {
         user.setLogin("");
 
-        Assertions.assertThrows(UserValidationException.class, () -> controller.addUser(user));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addUser(user));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUserLoginContainsSpace() {
         user.setLogin("not normal login with spaces");
 
-        Assertions.assertThrows(UserValidationException.class, () -> controller.addUser(user));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addUser(user));
     }
 
     @Test

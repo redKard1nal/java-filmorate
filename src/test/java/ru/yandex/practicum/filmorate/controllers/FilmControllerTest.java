@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 public class FilmControllerTest {
@@ -26,26 +25,26 @@ public class FilmControllerTest {
         film.setName("Normal name");
         film.setDescription("Normal desc.");
         film.setReleaseDate(LocalDate.of(2020, 12, 28));
-        film.setDuration(Duration.ofHours(2));
+        film.setDuration(2);
     }
 
     @Test
     public void shouldNotThrowAnyWhenItIsNormalFim() {
-        Assertions.assertDoesNotThrow(() ->controller.addFilm(film));
+        Assertions.assertDoesNotThrow(() -> controller.addFilm(film));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenFilmsNameIsEmpty() {
         film.setName("");
 
-        Assertions.assertThrows(FilmValidationException.class, () -> controller.addFilm(film));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addFilm(film));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenFilmsDescIsToLarge() {
         film.setDescription("To large description over 200 symbols".repeat(1000));
 
-        Assertions.assertThrows(FilmValidationException.class, () -> controller.addFilm(film));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addFilm(film));
     }
 
     @Test
@@ -66,7 +65,7 @@ public class FilmControllerTest {
     public void shouldThrowAnExceptionWhenFilmIsTooOld() {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
 
-        Assertions.assertThrows(FilmValidationException.class, () -> controller.addFilm(film));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addFilm(film));
     }
 
     @Test
@@ -85,21 +84,21 @@ public class FilmControllerTest {
 
     @Test
     public void shouldThrowAnExceptionWhenFilmDurationIsNegative() {
-        film.setDuration(Duration.ofSeconds(-1));
+        film.setDuration(-1);
 
-        Assertions.assertThrows(FilmValidationException.class, () -> controller.addFilm(film));
+        Assertions.assertThrows(ValidationException.class, () -> controller.addFilm(film));
     }
 
     @Test
     public void shouldNotThrowAnExceptionWhenFilmDurationIsZero() {
-        film.setDuration(Duration.ofSeconds(0));
+        film.setDuration(0);
 
         Assertions.assertDoesNotThrow(() -> controller.addFilm(film));
     }
 
     @Test
     public void shouldNotThrowAnExceptionWhenFilmDurationIsPositive() {
-        film.setDuration(Duration.ofSeconds(1));
+        film.setDuration(1);
 
         Assertions.assertDoesNotThrow(() -> controller.addFilm(film));
     }

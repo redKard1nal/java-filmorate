@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.FilmValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -35,8 +35,8 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
-        if(!films.contains(film)) {
-            throw new FilmNotFoundException("Не удалось найти пользователя: " + film);
+        if (!films.contains(film)) {
+            throw new NotFoundException("Не удалось найти пользователя: " + film);
         }
 
         validateFilm(film);
@@ -47,7 +47,7 @@ public class FilmController {
     }
 
     private void validateFilm(Film film) {
-        if(film.getName() == null || film.getName().isEmpty()) {
+        if (film.getName() == null || film.getName().isEmpty()) {
             failValidation(film, "Название фильма не должно быть пустым.");
         }
         if (film.getDescription().length() > 200) {
@@ -56,14 +56,14 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(RELEASE_DATE_ALLOWED)) {
             failValidation(film, "Фильм слишком старый.");
         }
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() < 0) {
             failValidation(film, "Указана отрицательная продолжительность фильма.");
         }
     }
 
-    private void failValidation(Film film, String reason) throws FilmValidationException {
+    private void failValidation(Film film, String reason) throws ValidationException {
         log.error("Ошибка валидации: '{}' для фильма: {}", reason, film);
-        throw new FilmValidationException(reason);
+        throw new ValidationException(reason);
     }
 
     private int generateId() {

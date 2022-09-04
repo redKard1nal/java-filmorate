@@ -2,10 +2,11 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UserValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         validateUser(user);
         user.setId(generateId());
         users.add(user);
@@ -33,9 +34,9 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
-        if(!users.contains(user)) {
-            throw new UserNotFoundException("Не удалось найти пользователя: " + user);
+    public User updateUser(@Valid @RequestBody User user) {
+        if (!users.contains(user)) {
+            throw new NotFoundException("Не удалось найти пользователя: " + user);
         }
 
         validateUser(user);
@@ -66,9 +67,9 @@ public class UserController {
         }
     }
 
-    private void failValidation(User user, String reason) throws UserValidationException {
+    private void failValidation(User user, String reason) throws ValidationException {
         log.error("Ошибка валидации: '{}' для пользователя: {}", reason, user);
-        throw new UserValidationException(reason);
+        throw new ValidationException(reason);
     }
 
     private int generateId() {
