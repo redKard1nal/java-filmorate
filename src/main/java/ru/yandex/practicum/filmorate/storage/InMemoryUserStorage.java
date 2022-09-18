@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -50,14 +49,10 @@ public class InMemoryUserStorage implements Storage<User> {
 
     @Override
     public User getById(long id) {
-        Optional<User> user = users.stream()
+        return users.stream()
                 .filter(e -> e.getId() == id)
-                .findFirst();
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new NotFoundException("Нет пользователя с id " + id);
-        }
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Нет пользователя с id " + id));
     }
 
     private long generateId() {

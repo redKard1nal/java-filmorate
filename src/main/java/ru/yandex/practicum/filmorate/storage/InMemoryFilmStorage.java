@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -53,14 +52,10 @@ public class InMemoryFilmStorage implements Storage<Film> {
 
     @Override
     public Film getById(long id) {
-        Optional<Film> film = films.stream()
+       return films.stream()
                 .filter(e -> e.getId() == id)
-                .findFirst();
-        if (film.isPresent()) {
-            return film.get();
-        } else {
-            throw new NotFoundException("Нет фильма с id " + id);
-        }
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Нет фильма с id " + id));
     }
 
 
