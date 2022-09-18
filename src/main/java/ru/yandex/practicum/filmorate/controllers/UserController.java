@@ -1,49 +1,67 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
-@Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping
+@Slf4j
 public class UserController {
+    private final UserService userService;
 
-    private final Set<User> users = new HashSet<>();
-    private int id = 0;
-
-    @GetMapping
-    public Set<User> getUsers() {
-        return users;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PostMapping
+    @GetMapping("/users")
+    public Set<User> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable long id) {
+        return userService.getUserById(id);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public Set<User> getUsersFriends(@PathVariable long id) {
+        return userService.getUserFriends(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Set<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+    @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
         validateUser(user);
-        user.setId(generateId());
-        users.add(user);
-        log.info("Добавлен новый пользователь: {}", user);
-        return user;
+        return userService.addUser(user);
     }
 
-    @PutMapping
+    @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user) {
-        if (!users.contains(user)) {
-            throw new NotFoundException("Не удалось найти пользователя: " + user);
-        }
-
         validateUser(user);
-        users.remove(user);
-        users.add(user);
-        log.info("Пользователь обновлен: {}", user);
-        return user;
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        userService.removeFriend(id, friendId);
     }
 
     private void validateUser(User user) {
@@ -70,9 +88,5 @@ public class UserController {
     private void failValidation(User user, String reason) throws ValidationException {
         log.error("Ошибка валидации: '{}' для пользователя: {}", reason, user);
         throw new ValidationException(reason);
-    }
-
-    private int generateId() {
-        return ++id;
     }
 }
