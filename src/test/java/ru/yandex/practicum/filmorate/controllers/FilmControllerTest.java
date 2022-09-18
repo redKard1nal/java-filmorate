@@ -20,7 +20,7 @@ public class FilmControllerTest {
     @BeforeAll
     public static void createController() {
         InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
-        controller = new FilmController(filmStorage, new FilmService(filmStorage, new InMemoryUserStorage()));
+        controller = new FilmController(new FilmService(filmStorage, new InMemoryUserStorage()));
     }
 
     @BeforeEach
