@@ -5,6 +5,6 @@ public enum Genre {
     DRAMA,
     CARTOON,
     THRILLER,
-    Documentary,
+    DOCUMENTARY,
     ACTION
 }
