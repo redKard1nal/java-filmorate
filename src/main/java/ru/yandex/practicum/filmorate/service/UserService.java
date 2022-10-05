@@ -23,8 +23,12 @@ public class UserService {
         User user1 = userStorage.getById(id);
         User user2 = userStorage.getById(friendId);
 
-        user1.addFriend(user2.getId());
-        user2.addFriend(user1.getId());
+        if (user1.getFriendRequests().contains(friendId)) {
+            user1.addFriend(user2.getId());
+            user2.addFriend(user1.getId());
+        } else {
+            user2.addFriendRequest(user1.getId());
+        }
     }
 
     public void removeFriend(long id, long friendId) {
