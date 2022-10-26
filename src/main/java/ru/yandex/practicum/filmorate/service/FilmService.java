@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.Comparator;
@@ -19,7 +18,8 @@ public class FilmService {
     private final Storage<User> userStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
+    public FilmService(@Qualifier("FilmDbStorage") Storage<Film> filmStorage,
+                       @Qualifier("UserDbStorage") Storage<User> userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
@@ -29,6 +29,7 @@ public class FilmService {
         User user = userStorage.getById(userId);
 
         film.addLike(user.getId());
+        updateFilm(film);
     }
 
     public void removeLike(long id, long userId) {
@@ -36,6 +37,7 @@ public class FilmService {
         User user = userStorage.getById(userId);
 
         film.removeLike(user.getId());
+        updateFilm(film);
     }
 
     public List<Film> getTopRated(int count) {

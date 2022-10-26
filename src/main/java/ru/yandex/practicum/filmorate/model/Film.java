@@ -6,15 +6,17 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Data
-public class Film {
+public class Film implements Comparable<Film> {
     private long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private long duration;
-    private Set<Long> likes = new HashSet<>();
-    private List<Genre> genres = new ArrayList<>();
-    private Rating MPA;
+    private int rate;
+    private MPA mpa;
+    private TreeSet<Genre> genres = new TreeSet<>();
+    private TreeSet<Long> likes = new TreeSet<>();
+
 
     public void addLike(long id) {
         likes.add(id);
@@ -39,5 +41,10 @@ public class Film {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(Film o) {
+        return (int) (this.id - o.getId());
     }
 }

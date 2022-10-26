@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.time.LocalDate;
@@ -60,6 +63,34 @@ public class FilmController {
         filmService.removeLike(id, userId);
     }
 
+    @GetMapping("/genres")
+    public GenreHelper[] getGenres() {
+        GenreHelper[] response = new GenreHelper[Genre.genres.length];
+        for (int i = 0; i < response.length; i++) {
+            response[i] = new GenreHelper(i + 1);
+        }
+        return response;
+    }
+
+    @GetMapping("/mpa")
+    public MPAHelper[] getRatings() {
+        MPAHelper[] response = new MPAHelper[MPA.MPAs.length];
+        for (int i = 0; i < response.length; i++) {
+            response[i] = new MPAHelper(i + 1);
+        }
+        return response;
+    }
+
+    @GetMapping("/genres/{id}")
+    public GenreHelper getGenreById(@PathVariable int id) {
+        return new GenreHelper(id);
+    }
+
+    @GetMapping("/mpa/{id}")
+    public MPAHelper getRatingById(@PathVariable int id) {
+        return new MPAHelper(id);
+    }
+
     private void validateFilm(Film film) {
         if (film.getName() == null || film.getName().isEmpty()) {
             failValidation(film, "Название фильма не должно быть пустым.");
@@ -80,4 +111,33 @@ public class FilmController {
         throw new ValidationException(reason);
     }
 
+}
+
+class GenreHelper {
+    public final int id;
+    public final String name;
+
+    public GenreHelper(int id) {
+        this.id = id;
+        try {
+            this.name = Genre.genres[id - 1];
+        } catch (IndexOutOfBoundsException e) {
+            throw new NotFoundException("Нет Жанра с id: " + id);
+        }
+    }
+}
+
+class MPAHelper {
+    public final int id;
+    public final String name;
+
+    public MPAHelper(int id) {
+        this.id = id;
+        try {
+            this.name = MPA.MPAs[id - 1];
+        } catch (IndexOutOfBoundsException e) {
+            throw new NotFoundException("Нет MPA с id: " + id);
+        }
+
+    }
 }

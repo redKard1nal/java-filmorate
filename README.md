@@ -1,2 +1,4 @@
 # java-filmorate
-Template repository for Filmorate project.
+
+
+![](C:\Users\sherp\Desktop\filmorate.png "Схема базы данных")
