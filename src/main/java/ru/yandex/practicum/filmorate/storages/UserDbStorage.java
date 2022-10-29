@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,7 +7,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ConflictException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +29,7 @@ public class UserDbStorage implements Storage<User> {
 
     @Override
     public Set<User> get() {
-        String sql = "select user_id, user_email, login, name, birthday from users";
+        String sql = "SELECT user_id, user_email, login, name, birthday FROM users";
         return Set.copyOf(jdbcTemplate.query(sql, (rs, rowNum) -> loadUser(rs)));
     }
 
@@ -40,7 +40,7 @@ public class UserDbStorage implements Storage<User> {
             throw new ConflictException("Такой пользователь уже существует.");
         }
         user.setId(getAvailableId());
-        jdbcTemplate.update("insert into users (user_id, user_email, login, name, birthday) values (?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO users (user_id, user_email, login, name, birthday) VALUES (?, ?, ?, ?, ?)",
                 user.getId(), user.getEmail(),
                 user.getLogin(), user.getName(),
                 user.getBirthday());
@@ -54,30 +54,30 @@ public class UserDbStorage implements Storage<User> {
             throw new NotFoundException("Не удалось найти пользователя: " + user);
         }
 
-        jdbcTemplate.update("update users set " +
+        jdbcTemplate.update("UPDATE users SET " +
                         "user_email = ?," +
                         "login = ?," +
                         "name = ?," +
                         "birthday = ?" +
-                        "where user_id = ?",
+                        "WHERE user_id = ?",
                 user.getEmail(),
                 user.getLogin(), user.getName(),
                 user.getBirthday(),
                 user.getId());
 
-        jdbcTemplate.update("delete from users_friends where user_id = ?", user.getId());
+        jdbcTemplate.update("DELETE FROM users_friends WHERE user_id = ?", user.getId());
         for (long l : user.getFriends()) {
-            jdbcTemplate.update("insert into users_friends values (?, ?, true)", user.getId(), l);
+            jdbcTemplate.update("INSERT INTO users_friends VALUES (?, ?, true)", user.getId(), l);
         }
         for (long l : user.getFriendRequests()) {
-            jdbcTemplate.update("insert into users_friends values (?, ?, false)", user.getId(), l);
+            jdbcTemplate.update("INSERT INTO users_friends VALUES (?, ?, false)", user.getId(), l);
         }
         return user;
     }
 
     @Override
     public User getById(long id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where user_id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
         if (userRows.next()) {
             User user = new User();
             user.setId(id);
@@ -94,12 +94,12 @@ public class UserDbStorage implements Storage<User> {
     }
 
     private Collection<Long> findUserFriends(long id) {
-        String sql = "select * from users_friends where user_id = ? and is_accepted = true";
+        String sql = "SELECT * FROM users_friends WHERE user_id = ? AND is_accepted = true";
         return jdbcTemplate.query(sql, (rs, rowNum) -> findFriend(rs), id);
     }
 
     private Collection<Long> findUserFriendRequests(long id) {
-        String sql = "select * from users_friends where user_id = ? and is_accepted = false";
+        String sql = "SELECT * FROM users_friends WHERE user_id = ? AND is_accepted = false";
         return jdbcTemplate.query(sql, (rs, rowNum) -> findFriend(rs), id);
     }
 
@@ -121,11 +121,11 @@ public class UserDbStorage implements Storage<User> {
     }
 
     private long getAvailableId() {
-        return jdbcTemplate.queryForObject("select coalesce(max(user_id), 0) from users", Integer.class) + 1;
+        return jdbcTemplate.queryForObject("SELECT coalesce(max(user_id), 0) FROM users", Integer.class) + 1;
     }
 
     private boolean isExist(long id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where user_id = ?", id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
         return userRows.next();
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.models;
 
 import lombok.Data;
 
@@ -13,9 +13,9 @@ public class Film implements Comparable<Film> {
     private LocalDate releaseDate;
     private long duration;
     private int rate;
-    private MPA mpa;
-    private TreeSet<Genre> genres = new TreeSet<>();
-    private TreeSet<Long> likes = new TreeSet<>();
+    private Mpa mpa;
+    private Set<Genre> genres = new TreeSet<>();
+    private Set<Long> likes = new TreeSet<>();
 
 
     public void addLike(long id) {
