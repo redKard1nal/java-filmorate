@@ -35,8 +35,8 @@ create table if not exists "MPA"
 
 create table if not exists "FILMS"
 (
-    film_id      INTEGER                not null,
-    film_name    CHARACTER VARYING(60)  not null,
+    film_id      INTEGER               not null,
+    film_name    CHARACTER VARYING(60) not null,
     description  CHARACTER VARYING(300),
     release_date DATE,
     duration     INTEGER,
@@ -62,7 +62,7 @@ create table if not exists "FILMS_LIKES"
 
 create table if not exists "FILMS_GENRES"
 (
-    film_id INTEGER not null,
+    film_id  INTEGER not null,
     genre_id INTEGER not null,
     constraint "Films_genres_pk"
         primary key (film_id, genre_id),
@@ -87,8 +87,8 @@ create table if not exists "USERS_FRIENDS"
 
 create table if not exists "FILMS"
 (
-    film_id      INTEGER                not null,
-    film_name    CHARACTER VARYING(60)  not null,
+    film_id      INTEGER               not null,
+    film_name    CHARACTER VARYING(60) not null,
     description  CHARACTER VARYING(300),
     release_date DATE,
     duration     INTEGER,
@@ -99,17 +99,17 @@ create table if not exists "FILMS"
         primary key (film_id)
 );
 
-insert into GENRES (genre_name) values
-                                              ('Комедия'),
-                                              ('Драма'),
-                                              ('Мультфильм'),
-                                              ('Триллер'),
-                                              ('Документальный'),
-                                              ('Боевик');
+insert into GENRES (genre_name)
+values ('Комедия'),
+       ('Драма'),
+       ('Мультфильм'),
+       ('Триллер'),
+       ('Документальный'),
+       ('Боевик');
 
-insert into MPA (mpa_name) values
-                                       ('G'),
-                                       ('PG'),
-                                       ('PG-13'),
-                                       ('R'),
-                                       ('NC-17');
+insert into MPA (mpa_name)
+values ('G'),
+       ('PG'),
+       ('PG-13'),
+       ('R'),
+       ('NC-17');
