@@ -55,6 +55,12 @@ public class InMemoryUserStorage implements Storage<User> {
                 .orElseThrow(() -> new NotFoundException("Нет пользователя с id " + id));
     }
 
+    @Override
+    public boolean isExist(long id) {
+        return users.stream()
+                .anyMatch(e -> e.getId() == id);
+    }
+
     private long generateId() {
         return ++id;
     }

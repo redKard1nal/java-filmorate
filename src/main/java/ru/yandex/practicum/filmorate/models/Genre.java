@@ -18,6 +18,5 @@ public class Genre implements Comparable<Genre> {
     @Override
     public int compareTo(Genre o) {
         return this.id - o.id;
-        //return o.id - this.id;
     }
 }

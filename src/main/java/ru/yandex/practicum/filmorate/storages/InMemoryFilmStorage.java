@@ -58,6 +58,11 @@ public class InMemoryFilmStorage implements Storage<Film> {
                 .orElseThrow(() -> new NotFoundException("Нет фильма с id " + id));
     }
 
+    @Override
+    public boolean isExist(long id) {
+        return films.stream()
+                .anyMatch(e -> e.getId() == id);
+    }
 
     private long generateId() {
         return ++id;

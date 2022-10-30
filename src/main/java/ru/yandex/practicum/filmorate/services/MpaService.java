@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.models.Mpa;
 import ru.yandex.practicum.filmorate.storages.MpaDbStorage;
+
+import java.util.Collection;
 
 @Service
 public class MpaService {
@@ -14,11 +17,11 @@ public class MpaService {
         this.mpaDbStorage = mpaDbStorage;
     }
 
-    public int getMpaCount() {
-        return mpaDbStorage.getMpaCount();
+    public Collection<Mpa> getAll() {
+        return mpaDbStorage.getAll();
     }
 
-    public String getMpaNameById(int id) {
-        return mpaDbStorage.getMpaNameById(id);
+    public Mpa getMpaById(int id) {
+        return mpaDbStorage.getMpaById(id);
     }
 }

@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.ConflictException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storages.Storage;
 
@@ -75,10 +77,22 @@ public class UserService {
     }
 
     public User addUser(User user) {
+        if (isExist(user.getId())) {
+            throw new ConflictException("Такой пользователь уже существует, id: " + user.getId());
+        }
+
         return userStorage.add(user);
     }
 
     public User updateUser(User user) {
+        if (!isExist(user.getId())) {
+            throw new NotFoundException("Не удалось найти пользователя с id: " + user.getId());
+        }
+
         return userStorage.update(user);
+    }
+
+    private boolean isExist(long id) {
+        return userStorage.isExist(id);
     }
 }

@@ -11,4 +11,6 @@ public interface Storage<T> {
     T update(T t);
 
     T getById(long id);
+
+    boolean isExist(long id);
 }

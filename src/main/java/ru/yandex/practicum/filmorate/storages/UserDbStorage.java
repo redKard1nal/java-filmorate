@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.ConflictException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.models.User;
 
@@ -35,10 +34,6 @@ public class UserDbStorage implements Storage<User> {
 
     @Override
     public User add(User user) {
-
-        if (isExist(user.getId())) {
-            throw new ConflictException("Такой пользователь уже существует.");
-        }
         user.setId(getAvailableId());
         jdbcTemplate.update("INSERT INTO users (user_id, user_email, login, name, birthday) VALUES (?, ?, ?, ?, ?)",
                 user.getId(), user.getEmail(),
@@ -50,10 +45,6 @@ public class UserDbStorage implements Storage<User> {
 
     @Override
     public User update(User user) {
-        if (!isExist(user.getId())) {
-            throw new NotFoundException("Не удалось найти пользователя: " + user);
-        }
-
         jdbcTemplate.update("UPDATE users SET " +
                         "user_email = ?," +
                         "login = ?," +
@@ -93,6 +84,12 @@ public class UserDbStorage implements Storage<User> {
         throw new NotFoundException("Нет пользователя с id " + id);
     }
 
+    @Override
+    public boolean isExist(long id) {
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
+        return userRows.next();
+    }
+
     private Collection<Long> findUserFriends(long id) {
         String sql = "SELECT * FROM users_friends WHERE user_id = ? AND is_accepted = true";
         return jdbcTemplate.query(sql, (rs, rowNum) -> findFriend(rs), id);
@@ -124,8 +121,4 @@ public class UserDbStorage implements Storage<User> {
         return jdbcTemplate.queryForObject("SELECT coalesce(max(user_id), 0) FROM users", Integer.class) + 1;
     }
 
-    private boolean isExist(long id) {
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM users WHERE user_id = ?", id);
-        return userRows.next();
-    }
 }

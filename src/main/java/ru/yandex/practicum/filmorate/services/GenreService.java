@@ -2,7 +2,11 @@ package ru.yandex.practicum.filmorate.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.models.Genre;
 import ru.yandex.practicum.filmorate.storages.GenreDbStorage;
+
+import java.util.Collection;
 
 @Service
 public class GenreService {
@@ -14,11 +18,17 @@ public class GenreService {
         this.genreDbStorage = genreDbStorage;
     }
 
-    public String getGenreNameById(int id) {
-        return genreDbStorage.getGenreNameById(id);
+    public Genre getGenreById(int id) {
+        Genre genre = genreDbStorage.getGenreById(id);
+        if (genre == null) {
+            throw new NotFoundException("Не удалось найти жанр с id: " + id);
+        }
+        return genre;
     }
 
-    public int getGenresCount() {
-        return genreDbStorage.getGenresCount();
+    public Collection<Genre> getAll() {
+        return genreDbStorage.getAll();
     }
+
+
 }

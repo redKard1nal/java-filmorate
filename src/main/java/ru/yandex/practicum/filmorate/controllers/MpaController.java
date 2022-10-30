@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.models.Mpa;
 import ru.yandex.practicum.filmorate.services.MpaService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping
@@ -23,20 +22,12 @@ public class MpaController {
     }
 
     @GetMapping("/mpa")
-    public List<Mpa> getMpa() {
-        List<Mpa> response = new ArrayList<>();
-        for (int i = 1; i <= mpaService.getMpaCount(); i++) {
-            Mpa mpa = new Mpa(i);
-            mpa.setName(mpaService.getMpaNameById(i));
-            response.add(mpa);
-        }
-        return response;
+    public Collection<Mpa> getMpa() {
+        return mpaService.getAll();
     }
 
     @GetMapping("/mpa/{id}")
     public Mpa getMpaById(@PathVariable int id) {
-        Mpa mpa = new Mpa(id);
-        mpa.setName(mpaService.getMpaNameById(id));
-        return mpa;
+        return mpaService.getMpaById(id);
     }
 }
