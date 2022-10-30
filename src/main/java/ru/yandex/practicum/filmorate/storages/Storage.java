@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storages;
 
 import java.util.Set;
 
@@ -11,4 +11,6 @@ public interface Storage<T> {
     T update(T t);
 
     T getById(long id);
+
+    boolean isExist(long id);
 }

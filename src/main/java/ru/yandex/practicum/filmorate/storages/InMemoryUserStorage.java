@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storages;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ConflictException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.models.User;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -53,6 +53,12 @@ public class InMemoryUserStorage implements Storage<User> {
                 .filter(e -> e.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Нет пользователя с id " + id));
+    }
+
+    @Override
+    public boolean isExist(long id) {
+        return users.stream()
+                .anyMatch(e -> e.getId() == id);
     }
 
     private long generateId() {

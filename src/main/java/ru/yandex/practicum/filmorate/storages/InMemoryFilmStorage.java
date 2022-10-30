@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storages;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ConflictException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.models.Film;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,6 +58,11 @@ public class InMemoryFilmStorage implements Storage<Film> {
                 .orElseThrow(() -> new NotFoundException("Нет фильма с id " + id));
     }
 
+    @Override
+    public boolean isExist(long id) {
+        return films.stream()
+                .anyMatch(e -> e.getId() == id);
+    }
 
     private long generateId() {
         return ++id;

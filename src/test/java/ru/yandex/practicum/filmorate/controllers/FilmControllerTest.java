@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.models.Film;
+import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.storages.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storages.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storages.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storages.MpaDbStorage;
 
 import java.time.LocalDate;
 
@@ -19,8 +22,10 @@ public class FilmControllerTest {
 
     @BeforeAll
     public static void createController() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
         InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
-        controller = new FilmController(new FilmService(filmStorage, new InMemoryUserStorage()));
+        controller = new FilmController(new FilmService(filmStorage, new InMemoryUserStorage(), new GenreDbStorage(jdbcTemplate),
+                new MpaDbStorage(jdbcTemplate)));
     }
 
     @BeforeEach
